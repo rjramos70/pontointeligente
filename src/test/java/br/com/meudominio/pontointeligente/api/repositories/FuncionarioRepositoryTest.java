@@ -1,10 +1,9 @@
 package br.com.meudominio.pontointeligente.api.repositories;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
-import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
@@ -12,82 +11,82 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import br.com.meudominio.pontointeligente.api.entities.Empresa;
 import br.com.meudominio.pontointeligente.api.entities.Funcionario;
-import br.com.meudominio.pontointeligente.api.entities.Lancamento;
 import br.com.meudominio.pontointeligente.api.enums.PerfilEnum;
-import br.com.meudominio.pontointeligente.api.enums.TipoEnum;
 import br.com.meudominio.pontointeligente.api.utils.PasswordUtils;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
-public class LancamentoRepositoryTest {
-	
-	@Autowired
-	private LancamentoRepository lancamentoRepository;
+public class FuncionarioRepositoryTest {
 	
 	@Autowired
 	private FuncionarioRepository funcionarioRepository;
 	
 	@Autowired
 	private EmpresaRepository empresaRepository;
-
-	private Long funcionarioId;
+	
+	private static final String EMAIL = "email@email.com";
+	private static final String CPF = "24291173474";
 	
 	@Before
-	public void setUp() throws Exception {
-		
+	public void setUp() throws Exception{
 		Empresa empresa = this.empresaRepository.save(obterDadosEmpresa());
-		
-		Funcionario funcionario = this.funcionarioRepository.save(obterDadosFuncionario(empresa));
-		this.funcionarioId = funcionario.getId();
-		
-		this.lancamentoRepository.save(obterDadosLancamentos(funcionario));
-		this.lancamentoRepository.save(obterDadosLancamentos(funcionario));
-		
+		this.funcionarioRepository.save(obterDadosFuncionario(empresa));
 	}
-
+	
 	@After
-	public void tearDown() throws Exception {
+	public final void tearDown() {
 		this.empresaRepository.deleteAll();
 	}
+	
+	@Test
+	public void testBuscarFuncionarioPorEmail() {
+		Funcionario funcionario = this.funcionarioRepository.findByEmail(EMAIL);
+		
+		assertEquals(EMAIL, funcionario.getEmail());
+	}
 
 	@Test
-	public void testBuscarLancamentosPorFuncionarioId() {
-		List<Lancamento> lancamentos = this.lancamentoRepository.findByFuncionarioId(funcionarioId);
+	public void testBuscarFuncionarioPorCpf() {
+		Funcionario funcionario = this.funcionarioRepository.findByCpf(CPF);
 		
-		assertEquals(2, lancamentos.size());
+		assertEquals(CPF, funcionario.getCpf());
 	}
 	
 	@Test
-	public void testBuscarLancamentosPorFuncionarioIdPaginado() {
-		PageRequest page = new PageRequest(0, 10);
-		Page<Lancamento> lancamentos = this.lancamentoRepository.findByFuncionarioId(funcionarioId, page);
+	public void testBuscarFuncionarioPorEmailECpf() {
+		Funcionario funcionario = this.funcionarioRepository.findByCpfOrEmail(CPF, EMAIL);
 		
-		assertEquals(2, lancamentos.getTotalElements());
+		assertNotNull(funcionario);
 	}
 	
-	private Lancamento obterDadosLancamentos(Funcionario funcionario) {
-		Lancamento lancameto = new Lancamento();
-		lancameto.setData(new Date());
-		lancameto.setTipo(TipoEnum.INICIO_ALMOCO);
-		lancameto.setFuncionario(funcionario);
-		return lancameto;
-	}
+	@Test
+	public void testBuscarFuncionarioPorEmailOuCpfParaEmailInvalido() {
+		Funcionario funcionario = this.funcionarioRepository.findByCpfOrEmail(CPF, "email@invalido.com");
 
+		assertNotNull(funcionario);
+	}
+	
+	@Test
+	public void testBuscarFuncionarioPorEmailECpfParaCpfInvalido() {
+		Funcionario funcionario = this.funcionarioRepository.findByCpfOrEmail("12345678901", EMAIL);
+
+		assertNotNull(funcionario);
+	}
+	
+	
 	private Funcionario obterDadosFuncionario(Empresa empresa) throws NoSuchAlgorithmException {
 		Funcionario funcionario = new Funcionario();
 		funcionario.setNome("Fulano de Tal");
 		funcionario.setPerfil(PerfilEnum.ROLE_USUARIO);
 		funcionario.setSenha(PasswordUtils.gerarBCrypt("123456"));
-		funcionario.setCpf("24291173474");
-		funcionario.setEmail("email@email.com");
+		funcionario.setCpf(CPF);
+		funcionario.setEmail(EMAIL);
 		funcionario.setEmpresa(empresa);
 		return funcionario;
 	}
