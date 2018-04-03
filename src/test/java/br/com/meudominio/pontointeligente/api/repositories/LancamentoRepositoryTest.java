@@ -37,12 +37,11 @@ public class LancamentoRepositoryTest {
 	
 	@Autowired
 	private EmpresaRepository empresaRepository;
-
-	private Long funcionarioId;
 	
+	private Long funcionarioId;
+
 	@Before
 	public void setUp() throws Exception {
-		
 		Empresa empresa = this.empresaRepository.save(obterDadosEmpresa());
 		
 		Funcionario funcionario = this.funcionarioRepository.save(obterDadosFuncionario(empresa));
@@ -50,7 +49,6 @@ public class LancamentoRepositoryTest {
 		
 		this.lancamentoRepository.save(obterDadosLancamentos(funcionario));
 		this.lancamentoRepository.save(obterDadosLancamentos(funcionario));
-		
 	}
 
 	@After
