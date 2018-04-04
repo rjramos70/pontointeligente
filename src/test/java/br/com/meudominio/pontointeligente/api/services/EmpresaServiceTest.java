@@ -1,5 +1,6 @@
 package br.com.meudominio.pontointeligente.api.services;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Optional;
@@ -42,6 +43,13 @@ public class EmpresaServiceTest {
 		Optional<Empresa> empresa = this.empresaService.buscarPorCnpj(CNPJ);
 		
 		assertTrue(empresa.isPresent());
+	}
+	
+	@Test
+	public void testPersistirEmpresa() {
+		Empresa empresa = this.empresaService.persistir(new Empresa());
+		
+		assertNotNull(empresa);
 	}
 
 }
