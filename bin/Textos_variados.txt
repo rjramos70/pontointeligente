@@ -1,0 +1,19 @@
+/* Configuracao do arquivo properties com os comentarios */
+# MySQL
+spring.jpa.hibernate.ddl-auto=none
+spring.datasource.url=jdbc:mysql://localhost:3306/ponto_inteligente
+spring.datasource.username=root
+# spring.datasource.password=Renato@1970
+spring.datasource.password=root
+
+# --------- Exibe os comandos SQL -------------------------------
+# Exibe as queries SQL executadas
+spring.jpa.properties.hibernate.show_sql=true	
+# Exibir qualquer comentario
+spring.jpa.properties.hibernate.use_sql_comments=true
+# Formatar as queries ao exibir no console
+spring.jpa.properties.hibernate.format_sql=true
+# Colocar o nivel de debug trace, para exibir tudo realmente que esta acontecendo no banco de dados.
+spring.jpa.properties.hibernate.type=trace
+
+
