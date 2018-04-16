@@ -6,7 +6,14 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.br.CNPJ;
 import org.hibernate.validator.constraints.br.CPF;
 
-public class CadastroPjDto {
+/**
+ * Classe DTO (Data Transfer Object) de Cadastro, responsavel pelo transito dos dados.
+ * Classe responsavel pelas validações mais basicas com validação de campo vazio, tamanho do campo, valdação de email e de cpf, entre outras.
+ * 
+ * @author renato
+ *
+ */
+public class CadastroPJDto {
 
 	private Long id;
 	private String nome;
@@ -16,7 +23,7 @@ public class CadastroPjDto {
 	private String razaoSocial;
 	private String cnpj;
 	
-	public CadastroPjDto() {
+	public CadastroPJDto() {
 		// TODO Auto-generated constructor stub
 	}
 	
@@ -28,10 +35,7 @@ public class CadastroPjDto {
 		this.id = id;
 	}
 	
-	// Abaixo as anotacoes das validacoes do campo nome
-	// Campo nome e obrigatorio
 	@NotEmpty(message = "Nome nao pode ser vazio.")
-	// Quantidade minima e maxima de caracteres
 	@Length(min = 3, max = 200, message = "Nome deve conter entre 3 e 200 caracteres.")
 	public String getNome() {
 		return nome;
@@ -95,9 +99,5 @@ public class CadastroPjDto {
 	public String toString() {
 		return "CadastroPjDto [id=" + id + ", nome=" + nome + ", email=" + email + ", senha=" + senha + ", cpf=" + cpf
 				+ ", razaoSocial=" + razaoSocial + ", cnpj=" + cnpj + "]";
-	}
-	
-	
-	
-	
+	}	
 }
