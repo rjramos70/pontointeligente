@@ -59,7 +59,7 @@ public class Lancamento implements Serializable {
 		this.data = data;
 	}
 
-	@Column( name = "descricao", nullable = false)
+	@Column( name = "descricao", nullable = true)
 	public String getDescricao() {
 		return descricao;
 	}
@@ -68,7 +68,7 @@ public class Lancamento implements Serializable {
 		this.descricao = descricao;
 	}
 
-	@Column( name = "localizacao", nullable = false)
+	@Column( name = "localizacao", nullable = true)
 	public String getLocalizacao() {
 		return localizacao;
 	}
