@@ -7,8 +7,8 @@ import org.hibernate.validator.constraints.br.CNPJ;
 import org.hibernate.validator.constraints.br.CPF;
 
 /**
- * Classe DTO (Data Transfer Object) de Cadastro, responsavel pelo transito dos dados.
- * Classe responsavel pelas validações mais basicas com validação de campo vazio, tamanho do campo, valdação de email e de cpf, entre outras.
+ * Classe DTO (Data Transfer Object) de Cadastro, responsavel pelo transito dos dados, dados vindos do Request.
+ * Classe responsavel pelas validações mais basicas tais como de campo vazio, tamanho do campo, valdação de email e de cpf, entre outras.
  * 
  * @author renato
  *

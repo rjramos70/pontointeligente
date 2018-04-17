@@ -141,7 +141,7 @@ public class CadastroPJController {
 		funcionario.setNome(cadastroPJDto.getNome());
 		funcionario.setEmail(cadastroPJDto.getEmail());
 		funcionario.setCpf(cadastroPJDto.getCpf());
-		funcionario.setPerfil(PerfilEnum.ROLE_ADMIN);
+		funcionario.setPerfil(PerfilEnum.ROLE_ADMIN);	// Dono da Empresa
 		funcionario.setSenha(PasswordUtils.gerarBCrypt(cadastroPJDto.getSenha()));
 		
 		return funcionario;
