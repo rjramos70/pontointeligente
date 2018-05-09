@@ -52,11 +52,13 @@ public class FuncionarioController {
 	public ResponseEntity<Response<FuncionarioDto>> atualizar(@PathVariable("id") Long id, 
 			@Valid @RequestBody FuncionarioDto funcionarioDto, BindingResult result) throws NoSuchAlgorithmException{
 		
+		// @Valid --> valida os dados de entrada
+		
 		log.info("Atualizando funcionário : {}", funcionarioDto.toString());
 		Response<FuncionarioDto> response = new Response<FuncionarioDto>();
 		
 		Optional<Funcionario> funcionario = this.funcionarioService.buscarPorId(id);
-		
+		// So devemos atualizar o funcionario existente na base de dados 
 		if (!funcionario.isPresent()) {
 			result.addError(new ObjectError("funcionario", "Funcionário não encontrado."));
 		}
@@ -64,13 +66,17 @@ public class FuncionarioController {
 		// Quando Funcionario é opcional, a maneira de se obter o objeto é usando o método .get() (funcionario.get())
 		this.atualizarDadosFuncionario(funcionario.get(), funcionarioDto, result);
 		
+		// Verifico se existe algum erro de validacao, caso haja, imprime na tela a mensagem de erro
+		// retornando o status de erro 400 (BadRequest)
 		if (result.hasErrors()) {
 			log.error("Erro validando funcionário : {}", result.getAllErrors());
 			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
 			return ResponseEntity.badRequest().body(response);	// retorna status 400 de badRequest.
 		}
 		
-		this.funcionarioService.persistir(funcionario.get());
+		// Caso todos os dados sejam validos
+		// persisto o funcionario atualizado.
+		this.funcionarioService.persistir(funcionario.get());		// Por funcionario ser um Optional, e preciso chamar o metodo .get() da classe.
 		response.setData(this.converterFuncionarioDto(funcionario.get()));
 		
 		return ResponseEntity.ok(response);		// retorna status 200 de sucesso.
@@ -91,15 +97,19 @@ public class FuncionarioController {
 		funcionario.setNome(funcionarioDto.getNome());
 		
 		if (!funcionario.getEmail().equals(funcionarioDto.getEmail())) {
+			// Funcionario pode mudar o email contanto que seja um email nao existente na base de dados.
 			this.funcionarioService.buscarPorEmail(funcionarioDto.getEmail())
 				.ifPresent(func -> result.addError(new ObjectError("email", "Email já existente.")));
 			funcionario.setEmail(funcionarioDto.getEmail());
 		}
 		
 		funcionario.setQtdHorasAlmoco(null);
-		
 		funcionarioDto.getQtdHorasAlmoco()
 				.ifPresent(qtdHorasAlmoco -> funcionario.setQtdHorasAlmoco(Float.valueOf(qtdHorasAlmoco)));
+		
+		funcionario.setQtdHorasTrabalhoDia(null);
+		funcionarioDto.getQtdHorasTrabalhoDia()
+				.ifPresent(qtdHorasTrabalhoDia -> funcionario.setQtdHorasTrabalhoDia(Float.valueOf(qtdHorasTrabalhoDia)));
 		
 		funcionario.setValorHora(null);
 		funcionarioDto.getValorHora()
@@ -122,10 +132,10 @@ public class FuncionarioController {
 		funcionarioDto.setId(funcionario.getId());
 		funcionarioDto.setEmail(funcionario.getEmail());
 		funcionarioDto.setNome(funcionario.getNome());
-		funcionario.getQtdHorasAlmocoOpt().ifPresent(
-				qtdHorasAlmoco -> funcionarioDto.setQtdHorasAlmoco(Optional.of(Float.toString(qtdHorasAlmoco))));
-		funcionario.getQtdHorasTrabalhoDiaOpt().ifPresent(
-				qtdHorasTrabDia -> funcionarioDto.setQtdHorasTrabalhoDia(Optional.of(Float.toString(qtdHorasTrabDia))));
+		funcionario.getQtdHorasAlmocoOpt()
+				.ifPresent(qtdHorasAlmoco -> funcionarioDto.setQtdHorasAlmoco(Optional.of(Float.toString(qtdHorasAlmoco))));
+		funcionario.getQtdHorasTrabalhoDiaOpt()
+				.ifPresent(qtdHorasTrabDia -> funcionarioDto.setQtdHorasTrabalhoDia(Optional.of(Float.toString(qtdHorasTrabDia))));
 		funcionario.getValorHoraOpt()
 				.ifPresent(valorHora -> funcionarioDto.setValorHora(Optional.of(valorHora.toString())));
 
