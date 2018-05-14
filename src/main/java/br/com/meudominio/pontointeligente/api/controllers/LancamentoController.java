@@ -15,12 +15,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -41,7 +44,7 @@ public class LancamentoController {
 	
 	// cria o log
 	private static final Logger log = LoggerFactory.getLogger(LancamentoController.class);
-	// cria o formatador
+	// cria o formatador de datas (formato Americano que o MySQL usa)
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	// Injeta as dependencias
@@ -96,7 +99,7 @@ public class LancamentoController {
 	}
 
 	/**
-	 * Adiciona um novo lancamento
+	 * Retorna um lancamento por ID
 	 * 
 	 * @param id
 	 * @return ResponseEntity<Response<LancamentoDto>>
@@ -120,7 +123,15 @@ public class LancamentoController {
 		return ResponseEntity.ok(response);
 	}
 	
-	
+	/**
+	 * Adiciona um nov lancamento
+	 * 
+	 * @param lancamentoDto
+	 * @param result
+	 * @return ResponseEntity<Response<LancamentoDto>>
+	 * @throws ParseException
+	 */
+	// como nao foi definido uma URL, sera usado a API /api/lancamentos
 	@PostMapping
 	public ResponseEntity<Response<LancamentoDto>> adicionar(@Valid @RequestBody LancamentoDto lancamentoDto,
 			BindingResult result) throws ParseException{
@@ -129,11 +140,52 @@ public class LancamentoController {
 		
 		Response<LancamentoDto> response = new Response<LancamentoDto>();
 		
+		// Valida se funcionario existe na base de dados
 		validarFuncionario(lancamentoDto, result);
 		
-		Lancamento lancamento = this.converteDtoParaLancamento(lancamentoDto, result);
+		// Converte o LancamentoDto para Lancamento
+		Lancamento lancamento = this.converterDtoParaLancamento(lancamentoDto, result);
 		
-		// Se houver algum erro
+		// Se houver algum erro de validacao.
+		if (result.hasErrors()) {
+			log.error("Erro validando lancamento: {}", result.getAllErrors());
+			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
+			return ResponseEntity.badRequest().body(response);	// retorna um erro 400 - BadRequest
+		}
+		
+		// Caso nao tenha erro, salva o lancamento retornando um lancamento
+		lancamento = this.lancamentoService.persistir(lancamento);
+		// Converte o lancamento para um LancamentoDto e inseri no response
+		response.setData(this.converteLancamentoDto(lancamento));
+		// Retorna um status 200 - sucess
+		return ResponseEntity.ok(response);
+	}
+	
+	
+	
+	/**
+	 * Atualiza os dados de um lancamento
+	 * 
+	 * @param id
+	 * @param lancamentoDto
+	 * @param result
+	 * @return ResponseEntity<Response<LancamentoDto>>
+	 * @throws ParseException
+	 */
+	@PutMapping(value = "/{id}")
+	public ResponseEntity<Response<LancamentoDto>> atualizar(@PathVariable("id") long id,
+			@Valid @RequestBody LancamentoDto lancamentoDto, BindingResult result) throws ParseException{
+		
+		log.info("Atualizando lancamento: {}", lancamentoDto.toString());
+		
+		Response<LancamentoDto> response = new Response<LancamentoDto>();
+		
+		validarFuncionario(lancamentoDto, result);
+		
+		lancamentoDto.setId(Optional.of(id));
+		
+		Lancamento lancamento = this.converterDtoParaLancamento(lancamentoDto, result);
+		
 		if (result.hasErrors()) {
 			log.error("Erro validando lancamento: {}", result.getAllErrors());
 			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
@@ -141,18 +193,33 @@ public class LancamentoController {
 		}
 		
 		lancamento = this.lancamentoService.persistir(lancamento);
+		response.setData(this.converteLancamentoDto(lancamento));
 		return ResponseEntity.ok(response);
 	}
 	
-	
-	
-	
-	// Recomecar no metodo atualizar...
-	
-	
-	
-	
-	
+	/**
+	 * Remove um lancamento por ID.
+	 * 
+	 * @param id
+	 * @return ResponseEntity<Response<String>>
+	 */
+	@DeleteMapping(value = "/{id}")
+	@PreAuthorize("hasAnyRole('ADMIN')")
+	public ResponseEntity<Response<String>> remover(@PathVariable("id") Long id){
+		
+		log.info("Removendo lancamento id: {}", id);
+		Response<String> response = new Response<String>();
+		Optional<Lancamento> lancamento = this.lancamentoService.buscarPorId(id);
+		
+		if (!lancamento.isPresent()) {
+			log.info("Erro ao remover devido ao lancamento ID: {} ser invalido.", id);
+			response.getErrors().add("Erro ao remover lancamento. Registro nao encontrado para o ID " + id);
+			return ResponseEntity.badRequest().body(response);	// Retorna erro 400
+		}
+		
+		this.lancamentoService.remover(id);
+		return ResponseEntity.ok(new Response<String>());		// Retorna status 200 - sucess
+	}
 	
 	
 	
@@ -209,7 +276,7 @@ public class LancamentoController {
 	 * @return Lancamento
 	 * @throws ParseException
 	 */
-	private Lancamento converteDtoParaLancamento(LancamentoDto lancamentoDto, BindingResult result) throws ParseException {
+	private Lancamento converterDtoParaLancamento(LancamentoDto lancamentoDto, BindingResult result) throws ParseException {
 		Lancamento lancamento = new Lancamento();
 
 		if (lancamentoDto.getId().isPresent()) {
@@ -228,6 +295,8 @@ public class LancamentoController {
 		lancamento.setLocalizacao(lancamentoDto.getLocalizacao());
 		lancamento.setData(this.dateFormat.parse(lancamentoDto.getData()));
 
+		// EnumUtils e um pacote do Apache, e verifica os tipos de Enum na classe TipoEnum.java 
+		// e verifica se o valor recebido lancamentoDto.getTipo() existe dentro da Enum TipoEnum.
 		if (EnumUtils.isValidEnum(TipoEnum.class, lancamentoDto.getTipo())) {
 			lancamento.setTipo(TipoEnum.valueOf(lancamentoDto.getTipo()));
 		} else {
