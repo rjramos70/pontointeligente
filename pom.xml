@@ -53,10 +53,7 @@
 			<scope>runtime</scope>
 		</dependency>
 		
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-		</dependency>
+		
 		
 		<dependency>
 			<groupId>org.flywaydb</groupId>
@@ -73,6 +70,20 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
 		</dependency>
+		
+		<!-- JWT Token -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.7.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+		</dependency>
+		
+		
 		
 		<!--  Hibernate validator -->
 		<dependency>
@@ -98,12 +109,7 @@
 			<version>3.6</version>
 		</dependency>
 		
-		<!-- JWT Token -->
-		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt</artifactId>
-			<version>0.7.0</version>
-		</dependency>
+
 		
 		<!-- Swagger e Swagger UI -->
 		<dependency>

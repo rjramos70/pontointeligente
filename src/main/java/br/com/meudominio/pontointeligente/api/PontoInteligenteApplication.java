@@ -3,7 +3,7 @@ package br.com.meudominio.pontointeligente.api;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import br.com.meudominio.pontointeligente.security.SenhaUtils;
+import br.com.meudominio.pontointeligente.api.security.SenhaUtils;
 
 @SpringBootApplication
 public class PontoInteligenteApplication {

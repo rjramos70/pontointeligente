@@ -1,4 +1,4 @@
-package br.com.meudominio.pontointeligente.security;
+package br.com.meudominio.pontointeligente.api.security;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
