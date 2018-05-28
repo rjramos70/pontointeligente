@@ -243,7 +243,7 @@ public class LancamentoController {
 		
 		// Se nao for identificado funcionario com o respectivo ID
 		if (!funcionario.isPresent()) {
-			result.addError(new ObjectError("funcionario", "Funcionario naop enontrado. ID inexistente."));
+			result.addError(new ObjectError("funcionario", "Funcionario nao encontrado. ID inexistente."));
 		}
 		
 		
