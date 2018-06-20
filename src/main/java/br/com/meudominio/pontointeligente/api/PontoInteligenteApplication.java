@@ -11,6 +11,10 @@ public class PontoInteligenteApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(PontoInteligenteApplication.class, args);
 		
+		/*
+		 
+		Teste da classe geradora de cryptografia
+		
 		String senha = "123456";
 		
 		System.out.println("Senha : ".concat(senha));
@@ -20,6 +24,8 @@ public class PontoInteligenteApplication {
 		System.out.println("Senha encoded : ".concat(senhaEncoded));
 		
 		System.out.println("Senha encoded : " + SenhaUtils.senhaValida(senha, senhaEncoded));
+		
+		*/
 		
 	}
 }

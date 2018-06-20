@@ -68,6 +68,8 @@ public class AuthenticationController {
 			return ResponseEntity.badRequest().body(response);
 		}
 		
+		log.info("login: {} \tSenha: {}", authenticationDto.getEmail(), authenticationDto.getSenha());
+		
 		log.info("Gerando token para o email {}", authenticationDto.getEmail());
 		Authentication authentication = this.authenticationManager
 										   .authenticate(new UsernamePasswordAuthenticationToken(authenticationDto.getEmail(), 
