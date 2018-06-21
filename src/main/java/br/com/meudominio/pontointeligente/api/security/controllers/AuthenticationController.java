@@ -75,6 +75,8 @@ public class AuthenticationController {
 										   .authenticate(new UsernamePasswordAuthenticationToken(authenticationDto.getEmail(), 
 												   											    authenticationDto.getSenha()));
 		
+		log.info("Authentication : {}", authentication);
+		
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		
 		UserDetails userDetails = this.userDetailsService.loadUserByUsername(authenticationDto.getEmail());
