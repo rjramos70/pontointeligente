@@ -1,4 +1,4 @@
-package br.com.meudominio.pontointeligente.api.swagger.config;
+package br.com.meudominio.pontointeligente.api.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -33,12 +33,16 @@ public class SwaggerConfig {
 	public Docket api() {
 		return new Docket(DocumentationType.SWAGGER_2)
 				.select()
-				.apis(RequestHandlerSelectors.basePackage("br.com.meudominio.pontointeligente.api.controllers"))
+				.apis(RequestHandlerSelectors.basePackage("br.com.meudominio.pontointeligente.api.controllers"))	// quando identificamos o pacote, isso melhora na performance, pois nao precisa ficar varrendo todo o sistema para identificar as controllers.
 				.paths(PathSelectors.any())
 				.build()
 				.apiInfo(apiInfo());
 	}
-
+	/**
+	 * Metodo que descreve a API
+	 * 
+	 * @return ApiInfo
+	 */
 	private ApiInfo apiInfo() {
 		return new ApiInfoBuilder()
 				.title("Swagger API")
@@ -47,11 +51,16 @@ public class SwaggerConfig {
 				.build();
 	}
 	
+	/**
+	 * Bean responsavel por validar um usuario e trazer um token para ser utilizado pelo Swagger.
+	 * 
+	 * @return
+	 */
 	@Bean
 	public SecurityConfiguration security() {
 		String token;
 		try {
-			UserDetails userDetails = this.userDetailService.loadUserByUsername("admin@kazale.com");	// usu'ario com ROLE_ADMIN existente na tabela Funcionario do banco
+			UserDetails userDetails = this.userDetailService.loadUserByUsername("admin@kazale.com");	// usuario com ROLE_ADMIN existente na tabela Funcionario do banco
 			token = this.jwtTokenUtil.obterToken(userDetails);
 			
 		} catch (Exception e) {
