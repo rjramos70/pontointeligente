@@ -124,11 +124,12 @@
 			<version>2.6.1</version>
 		</dependency>
 		
-		<!-- EhCache -->
+		<!-- EhCache - para melhorar a performance da aplicacao -->
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache</artifactId>
 		</dependency>
+		
 	</dependencies>
 
 	<build>
