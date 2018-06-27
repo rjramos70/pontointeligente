@@ -112,19 +112,21 @@
 
 		
 		<!-- Swagger e Swagger UI -->
+		<!-- Swagger Core, responsavel por gerar os end points e a documentacao em formato JSon -->
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>
 			<version>2.6.1</version>
 		</dependency>
-		
+		<!-- Springfox Swagger UI, responsavel por gerar uma interface grafica para acesso aos nossos end points -->
+		<!-- IMPORTANTE: que a versao dos dois pacotes sejam as mesmas para nao gerar incompatibilidade de versoes -->
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger-ui</artifactId>
 			<version>2.6.1</version>
 		</dependency>
 		
-		<!-- EhCache - para melhorar a performance da aplicacao -->
+		<!-- EhCache - para implementacao de cache na aplicacao melhorando a performance -->
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache</artifactId>

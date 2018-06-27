@@ -54,13 +54,13 @@ public class SwaggerConfig {
 	/**
 	 * Bean responsavel por validar um usuario e trazer um token para ser utilizado pelo Swagger.
 	 * 
-	 * @return
+	 * @return SecurityConfiguration
 	 */
 	@Bean
 	public SecurityConfiguration security() {
 		String token;
 		try {
-			UserDetails userDetails = this.userDetailService.loadUserByUsername("admin@kazale.com");	// usuario com ROLE_ADMIN existente na tabela Funcionario do banco
+			UserDetails userDetails = this.userDetailService.loadUserByUsername("admin@kazale.com");	// busca usuario com ROLE_ADMIN existente na tabela Funcionario do banco
 			token = this.jwtTokenUtil.obterToken(userDetails);
 			
 		} catch (Exception e) {
